@@ -71,3 +71,52 @@ def giveVariance(pixels):
     var /= len(pixels)
     return var
 
+def luminosity(pixels, weight):
+    avg = 0
+    sumWeight = 0
+    i = 0
+    if(len(pixels) != len(weight)):
+        raise Exception('pixels and weight must have the same length')
+    else:
+        while i<length(pixels):
+            avg += greyscale(pixels[i])*weight[i]
+            sumWeight += weight[i]
+            i +=1
+        return avg/sumWeight
+
+#Calculates how much white (and therefore potentially how much snow) is in an image
+def snowLevel(image, threshold):
+    i = 0
+    white = 0
+    pixels = image.getdata()
+    while i<len(pixels):
+        if(greyscale(pixels[i])>threshold):
+            white+=1
+        i+=1
+    return white/len(pixels)
+
+#Gives the edges of the shapes inside an image
+def edges(image):
+    imEdges = image.filter(ImageFilter.EDGE_ENHANCE)
+    diff = ImageChops.difference(image, imEdges).getdata()
+    i = 0
+    pixelEdge = list()
+    while i<len(diff):
+        if(greyscale(diff[i]) != 0):
+            pixelEdge.append(i)
+        i++
+    return pixelEdge
+
+#Converts the number of a pixel into its (x,y) coordinate (pixels start from 0),
+#(x,y) from (0,0)
+def convertCoord(nb, maxX):
+    return (nb%maxX, nb//maxX)
+
+#Does the opposite
+def convertNb(coord, maxX):
+    return coord[0]+coord[1]*maxX
+
+
+
+
+"""matplotlib.pyplot.show(matplotlib.pyplot.boxplot(temp))"""
